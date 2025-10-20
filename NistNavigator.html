@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIST CSF 2.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; min-height: 100vh; }
+        .container { max-width: 1800px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 30px; text-align: center; }
+        h1 { font-size: 28px; margin-bottom: 10px; }
+        .subtitle { font-size: 14px; opacity: 0.9; }
+        .filters { padding: 20px 30px; background: #f8f9fa; border-bottom: 2px solid #e9ecef; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+        .filter-group { display: flex; align-items: center; gap: 10px; }
+        label { font-weight: 600; color: #495057; }
+        select { padding: 8px 12px; border: 2px solid #dee2e6; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .table-wrapper { overflow: auto; padding: 30px; max-height: 75vh; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        thead { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; position: sticky; top: 0; }
+        th { padding: 12px; text-align: left; font-weight: 600; }
+        td { padding: 10px; border: 1px solid #e9ecef; vertical-align: top; }
+        tbody tr:hover { background-color: #f8f9fa; }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; margin-bottom: 4px; }
+        .function-badge { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .category-badge { background: #e7f3ff; color: #0066cc; }
+        .capex-badge { background: #cfe2ff; color: #084298; }
+        .opex-badge { background: #d1e7dd; color: #0f5132; }
+        ul { margin: 0; padding-left: 20px; list-style: none; }
+        li { margin-bottom: 4px; color: #495057; font-size: 11px; position: relative; padding-left: 12px; }
+        li:before { content: "▸"; position: absolute; left: 0; color: #667eea; font-weight: bold; }
+        .stats { padding: 10px 30px; background: #f0f5ff; border-top: 1px solid #dee2e6; color: #495057; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>NIST Cybersecurity Framework 2.0</h1>
+            <p class="subtitle">Détail par Subcatégorie - People / Process / Technology / Investissements</p>
+        </header>
+        <div class="filters">
+            <div class="filter-group">
+                <label for="functionFilter">Fonction :</label>
+                <select id="functionFilter">
+                    <option value="">-- Sélectionner --</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="categoryFilter">Catégorie :</label>
+                <select id="categoryFilter">
+                    <option value="">-- Sélectionner --</option>
+                </select>
+            </div>
+            <div id="stats" class="stats">Chargement...</div>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 7%;">Fonction</th>
+                        <th style="width: 9%;">Catégorie</th>
+                        <th style="width: 7%;">Sub-Cat</th>
+                        <th style="width: 20%;">Description</th>
+                        <th style="width: 12%;">People</th>
+                        <th style="width: 12%;">Process</th>
+                        <th style="width: 12%;">Technology</th>
+                        <th style="width: 16%;">CAPEX / OPEX</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const data = [
+            {func:"GV",cat:"GV.OC",sub:"GV.OC-01",desc:"The organizational mission is understood and informs cybersecurity risk management",people:["Directeurs","Responsables cyber"],process:["Définir mission","Alignement stratégique"],tech:["Outils stratégie","Documentation"],capex:"Faible",opex:"Minimal",details:""},
+            {func:"GV",cat:"GV.OC",sub:"GV.OC-02",desc:"Internal and external stakeholders are understood, and their needs are considered",people:["Parties prenantes","Engagement experts"],process:["Identification stakeholders","Feedback gathering"],tech:["Plateformes collaboration","Surveys"],capex:"Faible",opex:"Minimal",details:""},
+            {func:"GV",cat:"GV.OC",sub:"GV.OC-03",desc:"Legal, regulatory, and contractual requirements are understood and managed",people:["Compliance officers","Legal team"],process:["Audit légal","Gestion conformité"],tech:["Outils compliance","Registres conformité"],capex:"Moyen",opex:"Moyen",details:"Outils compliance : 50K-100K€"},
+            {func:"GV",cat:"GV.OC",sub:"GV.OC-04",desc:"Critical objectives, capabilities, and services that external stakeholders depend on are understood",people:["Product owners","Service leaders"],process:["Documenter services","Communication externe"],tech:["Catalogues services","Dashboards"],capex:"Moyen",opex:"Moyen",details:"Catalogues : 30K-60K€"},
+            {func:"GV",cat:"GV.OC",sub:"GV.OC-05",desc:"Outcomes, capabilities, and services that the organization depends on are understood",people:["Responsables IT","Architects"],process:["Cartographie dépendances","Analyse criticité"],tech:["CMDB","Outils mapping"],capex:"Moyen",opex:"Moyen",details:"CMDB/Mapping : 40K-80K€"},
+            {func:"GV",cat:"GV.RM",sub:"GV.RM-01",desc:"Risk management objectives are established and agreed to",people:["Risk owners","Comité de risque"],process:["Établir objectifs","Gouvernance risque"],tech:["Outils GRC","Registres risque"],capex:"Moyen",opex:"Moyen",details:"Outils GRC : 60K-120K€"},
+            {func:"GV",cat:"GV.RM",sub:"GV.RM-02",desc:"Risk appetite and risk tolerance statements are established and communicated",people:["Executive board","CRO"],process:["Définir appétit risque","Communication risk"],tech:["Frameworks GRC","Documentation"],capex:"Faible",opex:"Minimal",details:""},
+            {func:"GV",cat:"GV.RM",sub:"GV.RM-03",desc:"Cybersecurity risk management is included in enterprise risk management processes",people:["Risk managers","ERM team"],process:["Intégration ERM","Reporting"],tech:["Outils ERM","SIEM intégré"],capex:"Élevé",opex:"Moyen",details:"Intégration ERM : 80K-150K€"},
+            {func:"GV",cat:"GV.RM",sub:"GV.RM-04",desc:"Strategic direction for risk response is established and communicated",people:["Risk officers","Strategic planners"],process:["Développer stratégie","Response planning"],tech:["Modélisation","Outils décision"],capex:"Moyen",opex:"Moyen",details:""},
+            {func:"GV",cat:"GV.RM",sub:"GV.RM-05",desc:"Lines of communication for cybersecurity risks are established",people:["Communicators","Leadership"],process:["Établir canaux","Escalade risque"],tech:["Outils collaboration","Notification"],capex:"Moyen",opex:"Moyen",details:"Outils collaboration : 20K-50K€"},
+            {func:"GV",cat:"GV.RM",sub:"GV.RM-06",desc:"A standardized method for calculating and prioritizing risks is established",people:["Risk analysts","Data scientists"],process:["Standardiser calcul","Priorisation"],tech:["Calculateurs risque","Analytics"],capex:"Moyen",opex:"Moyen",details:"Analytics : 50K-100K€"},
+            {func:"GV",cat:"GV.RM",sub:"GV.RM-07",desc:"Strategic opportunities are characterized in risk discussions",people:["Strategic planners","Innovation team"],process:["Identifier opportunités","Risk-opportunity mix"],tech:["Outils stratégie","Modélisation"],capex:"Faible",opex:"Minimal",details:""},
+            {func:"GV",cat:"GV.RR",sub:"GV.RR-01",desc:"Organizational leadership is responsible and accountable for cybersecurity risk",people:["C-Level executives","Board"],process:["Définir responsabilité","Accountability"],tech:["Governance tools","Reporting"],capex:"Moyen",opex:"Moyen",details:""},
+            {func:"GV",cat:"GV.RR",sub:"GV.RR-02",desc:"Roles, responsibilities, and authorities are established",people:["Managers","CISO","Team leads"],process:["RACI matrix","Délégations"],tech:["Organigrammes","PAM"],capex:"Moyen",opex:"Moyen",details:"PAM : 100K-200K€"},
+            {func:"GV",cat:"GV.RR",sub:"GV.RR-03",desc:"Adequate resources are allocated for cybersecurity",people:["Budget managers","CFO"],process:["Allocation budgets","Resource planning"],tech:["Budget tools","Financial systems"],capex:"Faible",opex:"Moyen",details:""},
+            {func:"GV",cat:"GV.RR",sub:"GV.RR-04",desc:"Cybersecurity is included in human resources practices",people:["HR professionals","L&D"],process:["Intégration cyber RH","Career paths"],tech:["HRMS","LMS"],capex:"Moyen",opex:"Moyen",details:"LMS : 30K-70K€"},
+            {func:"GV",cat:"GV.PO",sub:"GV.PO-01",desc:"Policy for managing cybersecurity risks is established and enforced",people:["Policy owners","Security team"],process:["Développer policies","Approbation"],tech:["Document management","Versioning"],capex:"Faible",opex:"Faible",details:""},
+            {func:"GV",cat:"GV.PO",sub:"GV.PO-02",desc:"Policy for managing cybersecurity risks is reviewed and updated",people:["Compliance team","Policy owners"],process:["Review cycles","Updates","Enforcement"],tech:["Policy tools","Tracking"],capex:"Moyen",opex:"Moyen",details:"Policy tools : 20K-40K€"},
+            {func:"GV",cat:"GV.OV",sub:"GV.OV-01",desc:"Cybersecurity risk management strategy outcomes are reviewed",people:["Board members","Risk committee"],process:["Review stratégie","Governance reporting"],tech:["Dashboards","BI tools"],capex:"Moyen",opex:"Moyen",details:"BI tools : 40K-80K€"},
+            {func:"GV",cat:"GV.OV",sub:"GV.OV-02",desc:"The cybersecurity risk management strategy is reviewed and adjusted",people:["CISO","Strategy leads"],process:["Adjustements stratégie","Strategic review"],tech:["Analytics","Reporting"],capex:"Moyen",opex:"Moyen",details:""},
+            {func:"GV",cat:"GV.OV",sub:"GV.OV-03",desc:"Organizational cybersecurity risk management performance is evaluated",people:["Performance managers","Auditors"],process:["Évaluation performance","Audits"],tech:["Metrics tools","Audit softwares"],capex:"Moyen",opex:"Moyen",details:"Audit tools : 30K-60K€"},
+            {func:"ID",cat:"ID.AM",sub:"ID.AM-01",desc:"Inventories of hardware managed by the organization are maintained",people:["Asset managers","IT staff"],process:["Inventaire hardware","Maintenance"],tech:["CMDB","Discovery tools"],capex:"Moyen",opex:"Moyen",details:"CMDB + Discovery : 60K-120K€"},
+            {func:"ID",cat:"ID.AM",sub:"ID.AM-02",desc:"Inventories of software, services, and systems are maintained",people:["Software managers","App owners"],process:["Inventaire software","License tracking"],tech:["Software inventory","SAST tools"],capex:"Moyen",opex:"Moyen",details:"Inventory tools : 40K-80K€"},
+            {func:"ID",cat:"ID.RA",sub:"ID.RA-01",desc:"Vulnerabilities in assets are identified, validated, and recorded",people:["Vulnerability analysts","Researchers"],process:["Scanning","Validation","Recording"],tech:["Vulnerability scanners","SIEM"],capex:"Moyen",opex:"Moyen",details:"Scanners vuln. : 50K-100K€"},
+            {func:"PR",cat:"PR.AA",sub:"PR.AA-01",desc:"Identities and credentials for authorized users are managed",people:["IAM team","Admins"],process:["Identity management","Credential provisioning"],tech:["IAM platforms","Directory services"],capex:"Élevé",opex:"Moyen",details:"IAM : 150K-300K€"},
+            {func:"PR",cat:"PR.AA",sub:"PR.AA-02",desc:"Identities are proofed and bound to credentials",people:["Identity managers","Verifiers"],process:["Identity proofing","Credential binding"],tech:["Verification systems","MFA"],capex:"Moyen",opex:"Moyen",details:"MFA : 50K-100K€"},
+            {func:"GV",cat:"GV.SC",sub:"GV.SC-01",desc:"A cybersecurity supply chain risk management program is established",people:["Procurement","Vendor managers"],process:["Établir programme SC","Governance"],tech:["Vendor management","Questionnaires"],capex:"Moyen",opex:"Moyen",details:""},
+            {func:"GV",cat:"GV.SC",sub:"GV.SC-02",desc:"Cybersecurity roles and responsibilities for suppliers are established",people:["Contract managers","Suppliers"],process:["Définir responsabilités","SLA"],tech:["Contract management","Tracking"],capex:"Faible",opex:"Moyen",details:""},
+            {func:"ID",cat:"ID.AM",sub:"ID.AM-03",desc:"Representations of network communication and data flows are maintained",people:["Network architects","Analysts"],process:["Cartographier réseau","Data flows"],tech:["Network diagrams","Flow analyzers"],capex:"Moyen",opex:"Moyen",details:"Network tools : 50K-100K€"},
+            {func:"ID",cat:"ID.RA",sub:"ID.RA-02",desc:"Cyber threat intelligence is received from information sharing forums",people:["Threat analysts","Security team"],process:["Threat intelligence gathering","Sharing"],tech:["Threat intel platforms","ISACs"],capex:"Moyen",opex:"Moyen",details:"Threat intel : 60K-120K€"},
+            {func:"PR",cat:"PR.DS",sub:"PR.DS-01",desc:"Confidentiality, integrity, and availability of data-at-rest are protected",people:["Data stewards","Crypto teams"],process:["Data classification","Encryption"],tech:["DLP tools","Encryption solutions"],capex:"Élevé",opex:"Moyen",details:"DLP + Encryption : 100K-200K€"},
+            {func:"PR",cat:"PR.PS",sub:"PR.PS-04",desc:"Log records are generated and made available",people:["Log administrators","SOC team"],process:["Log generation","Log aggregation"],tech:["SIEM","Log management"],capex:"Élevé",opex:"Moyen",details:"SIEM : 150K-300K€"},
+            {func:"PR",cat:"PR.IR",sub:"PR.IR-01",desc:"Networks and environments are protected from unauthorized access",people:["Network architects","Firewall admins"],process:["Access controls","Network segmentation"],tech:["Firewalls","WAF","IPS/IDS"],capex:"Élevé",opex:"Moyen",details:"Firewalls/WAF : 150K-300K€"},
+            {func:"DE",cat:"DE.CM",sub:"DE.CM-02",desc:"The physical environment is monitored",people:["Physical security","Analysts"],process:["Physical environment monitoring","Incident response"],tech:["CCTV","Sensors","Alarms"],capex:"Moyen",opex:"Moyen",details:"Monitoring : 80K-150K€"},
+            {func:"DE",cat:"DE.CM",sub:"DE.CM-03",desc:"Personnel activity and technology usage are monitored",people:["User behavior analysts","SOC"],process:["Activity monitoring","Anomaly detection"],tech:["User monitoring","UEBA"],capex:"Moyen",opex:"Moyen",details:"UEBA : 80K-150K€"},
+            {func:"DE",cat:"DE.AE",sub:"DE.AE-02",desc:"Potentially adverse events are analyzed",people:["SOC analysts","Security team"],process:["Event analysis","Classification"],tech:["SIEM","Analytics"],capex:"Moyen",opex:"Moyen",details:""},
+            {func:"DE",cat:"DE.AE",sub:"DE.AE-03",desc:"Information is correlated from multiple sources",people:["Data analysts","Correlators"],process:["Data correlation","Multi-source analysis"],tech:["SIEM","Correlation engines"],capex:"Moyen",opex:"Moyen",details:""},
+            {func:"DE",cat:"DE.AE",sub:"DE.AE-04",desc:"The estimated impact and scope of adverse events are understood",people:["Impact assessors","Senior analysts"],process:["Impact assessment","Scope determination"],tech:["Analytics tools","Impact models"],capex:"Moyen",opex:"Moyen",details:""},
+            {func:"DE",cat:"DE.AE",sub:"DE.AE-08",desc:"Incidents are declared when adverse events meet criteria",people:["Incident managers","SOC"],process:["Incident declaration","Criteria application"],tech:["Ticketing systems","SOAR"],capex:"Moyen",opex:"Moyen",details:"SOAR : 100K-200K€"},
+            {func:"RS",cat:"RS.MA",sub:"RS.MA-02",desc:"Incident reports are triaged and validated",people:["Incident analysts","Triage team"],process:["Incident triage","Validation"],tech:["Ticketing","SOAR"],capex:"Moyen",opex:"Moyen",details:""},
+            {func:"RS",cat:"RS.MA",sub:"RS.MA-03",desc:"Incidents are categorized and prioritized",people:["Categorization team","Analysts"],process:["Categorization","Prioritization"],tech:["Classification tools","SOAR"],capex:"Faible",opex:"Moyen",details:""},
+            {func:"RS",cat:"RS.AN",sub:"RS.AN-03",desc:"Analysis is performed to establish root cause of incident",people:["Forensic analysts","Engineers"],process:["Root cause analysis","Investigation"],tech:["Forensic tools","Memory analysis"],capex:"Moyen",opex:"Moyen",details:"Forensics tools : 50K-100K€"},
+            {func:"RS",cat:"RS.CO",sub:"RS.CO-02",desc:"Internal and external stakeholders are notified of incidents",people:["Communications","PR team"],process:["Stakeholder notification","Message delivery"],tech:["Notification systems","Communication tools"],capex:"Moyen",opex:"Moyen",details:"Communication tools : 20K-50K€"},
+            {func:"RS",cat:"RS.MI",sub:"RS.MI-01",desc:"Incidents are contained",people:["Containment team","Engineers"],process:["Incident containment","Isolation"],tech:["Quarantine systems","Network isolation"],capex:"Moyen",opex:"Moyen",details:"Isolation tools : 60K-120K€"},
+            {func:"RC",cat:"RC.RP",sub:"RC.RP-02",desc:"Recovery actions are selected and performed",people:["Recovery coordinators","Engineers"],process:["Recovery actions","System restoration"],tech:["Backup systems","Recovery tools"],capex:"Moyen",opex:"Moyen",details:""},
+            {func:"RC",cat:"RC.RP",sub:"RC.RP-03",desc:"The integrity of backups is verified before restoration",people:["Backup team","Verification"],process:["Backup integrity check","Pre-restoration verification"],tech:["Backup verification","Testing tools"],capex:"Moyen",opex:"Moyen",details:"Backup verification : 40K-80K€"},
+            {func:"RC",cat:"RC.CO",sub:"RC.CO-03",desc:"Recovery activities are communicated to stakeholders",people:["Communications team","Leadership"],process:["Recovery communication","Status updates"],tech:["Communication tools","Updates"],capex:"Faible",opex:"Moyen",details:""}
+        ];
+
+        const catNames = {
+            "GV.OC":"Organizational Context",
+            "GV.RM":"Risk Management Strategy",
+            "GV.RR":"Roles & Responsibilities",
+            "GV.PO":"Policy",
+            "GV.OV":"Oversight",
+            "GV.SC":"Supply Chain Risk Management",
+            "ID.AM":"Asset Management",
+            "ID.RA":"Risk Assessment",
+            "ID.IM":"Improvement",
+            "PR.AA":"Identity Management",
+            "PR.AT":"Awareness & Training",
+            "PR.DS":"Data Security",
+            "PR.PS":"Platform Security",
+            "PR.IR":"Infrastructure Resilience",
+            "DE.CM":"Continuous Monitoring",
+            "DE.AE":"Adverse Event Analysis",
+            "RS.MA":"Incident Management",
+            "RS.AN":"Incident Analysis",
+            "RS.CO":"Response Reporting",
+            "RS.MI":"Incident Mitigation",
+            "RC.RP":"Recovery Plan Execution",
+            "RC.CO":"Recovery Communication"
+        };
+
+        const funcNames = {"GV":"Govern","ID":"Identify","PR":"Protect","DE":"Detect","RS":"Respond","RC":"Recover"};
+
+        function render() {
+            const funcVal = document.getElementById('functionFilter').value;
+            const catVal = document.getElementById('categoryFilter').value;
+            
+            let filtered = data.filter(row => {
+                if (funcVal && row.func !== funcVal) return false;
+                if (catVal && row.cat !== catVal) return false;
+                return true;
+            });
+
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            filtered.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge function-badge">${row.func}</span><br><small>${funcNames[row.func]}</small></td>
+                    <td><span class="badge category-badge">${row.cat}</span><br><small>${catNames[row.cat]}</small></td>
+                    <td><strong>${row.sub}</strong></td>
+                    <td><small>${row.desc}</small></td>
+                    <td><ul>${row.people.map(p => `<li>${p}</li>`).join('')}</ul></td>
+                    <td><ul>${row.process.map(p => `<li>${p}</li>`).join('')}</ul></td>
+                    <td><ul>${row.tech.map(t => `<li>${t}</li>`).join('')}</ul></td>
+                    <td><span class="badge capex-badge">CAPEX: ${row.capex}</span><br><span class="badge opex-badge">OPEX: ${row.opex}</span>${row.details ? `<div style="margin-top:6px;font-size:10px;color:#666;">${row.details}</div>` : ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('stats').innerHTML = `<strong>${filtered.length} subcatégories affichées</strong>`;
+        }
+
+        // Populate filters
+        const functions = [...new Set(data.map(d => d.func))].sort();
+        const funcSel = document.getElementById('functionFilter');
+        funcSel.innerHTML = '<option value="">Toutes les fonctions</option>' + functions.map(f => `<option value="${f}">${f} - ${funcNames[f]}</option>`).join('');
+
+        const categories = [...new Set(data.map(d => d.cat))].sort();
+        const catSel = document.getElementById('categoryFilter');
+        catSel.innerHTML = '<option value="">Toutes les catégories</option>' + categories.map(c => `<option value="${c}">${c} - ${catNames[c]}</option>`).join('');
+
+        funcSel.addEventListener('change', () => {
+            const funcVal = funcSel.value;
+            const categoriesForFunc = funcVal ? [...new Set(data.filter(d => d.func === funcVal).map(d => d.cat))].sort() : categories;
+            
+            catSel.innerHTML = '<option value="">Toutes les catégories</option>' + categoriesForFunc.map(c => `<option value="${c}">${c} - ${catNames[c]}</option>`).join('');
+            
+            render();
+        });
+        catSel.addEventListener('change', render);
+
+        render();
+    </script>
+</body>
+</html>
