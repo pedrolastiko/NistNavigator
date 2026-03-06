@@ -173,7 +173,7 @@
                     <td><ul>${row.people.map(p => `<li>${p}</li>`).join('')}</ul></td>
                     <td><ul>${row.process.map(p => `<li>${p}</li>`).join('')}</ul></td>
                     <td><ul>${row.tech.map(t => `<li>${t}</li>`).join('')}</ul></td>
-                    <td><span class="badge capex-badge">CAPEX: ${row.capex}</span><br><span class="badge opex-badge">OPEX: ${row.opex}</span>${row.details ? `<div style="margin-top:6px;font-size:10px;color:#666;">${row.details}</div>` : ''}</td>
+                    <td><span class="badge capex-badge">CAPEX: ${row.capex}</span><br><span class="badge opex-badge">OPEX: ${row.opex}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
