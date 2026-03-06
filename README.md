@@ -1,5 +1,5 @@
 # NistNavigator
-![Logo NistNavigator](assets/nist-navigator-logo.svg)
+![Logo NistNavigator](assets/NIST-Navigator.png)
 
 🛡️ NistNavigator - Your guide through NIST CSF 2.0 💼 People | 📋 Process | 💻 Technology | 💰 Investment levels
 
