@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
+  <title id="title">NIST Cybersecurity Framework 2.0 Navigator</title>
+  <desc id="desc">Logo noir et blanc avec un navire et le texte Security Visibility Resilience</desc>
+  <rect width="900" height="1200" fill="#f8f7f3"/>
+  <g fill="#0a0f14" font-family="Arial, Helvetica, sans-serif" font-weight="700" letter-spacing="8">
+    <text x="200" y="115" font-size="54" transform="rotate(-30 200 115)">SECURITY</text>
+    <text x="520" y="110" font-size="54" transform="rotate(28 520 110)">RESILIENCE</text>
+    <text x="300" y="80" font-size="54">VISIBILITY</text>
+  </g>
+  <g fill="#0a0f14" stroke="#0a0f14" stroke-width="6">
+    <path d="M190 620 C290 570 610 570 710 620 C680 670 230 670 190 620 Z"/>
+    <path d="M230 610 L190 760 L360 760 L360 620 Z" fill="none"/>
+    <path d="M670 610 L540 760 L710 760 Z" fill="none"/>
+    <line x1="450" y1="300" x2="450" y2="625"/>
+    <line x1="320" y1="360" x2="320" y2="625"/>
+    <line x1="580" y1="390" x2="580" y2="625"/>
+    <path d="M450 340 C560 345 620 380 610 470 C560 450 500 450 450 470 Z" fill="#fff"/>
+    <path d="M450 460 C560 460 620 500 610 595 C560 565 500 560 450 585 Z" fill="#fff"/>
+    <path d="M320 400 C250 410 210 440 220 530 C260 520 290 520 320 530 Z" fill="#fff"/>
+    <path d="M580 430 C650 440 690 470 680 560 C640 545 610 545 580 560 Z" fill="#fff"/>
+    <path d="M430 290 C470 275 530 275 565 300 C515 315 470 313 430 290 Z"/>
+  </g>
+  <g fill="#0a0f14" font-family="Arial, Helvetica, sans-serif" text-anchor="middle" font-weight="800">
+    <text x="450" y="840" font-size="118" letter-spacing="6">NIST</text>
+    <text x="450" y="930" font-size="76" letter-spacing="4">CYBERSECURITY</text>
+    <text x="450" y="1015" font-size="76" letter-spacing="4">FRAMEWORK</text>
+    <text x="450" y="1090" font-size="64" letter-spacing="3">2.0 NAVIGATOR</text>
+  </g>
+</svg>

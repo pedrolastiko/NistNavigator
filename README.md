@@ -1,4 +1,6 @@
 # NistNavigator
+![Logo NistNavigator](assets/nist-navigator-logo.svg)
+
 🛡️ NistNavigator - Your guide through NIST CSF 2.0 💼 People | 📋 Process | 💻 Technology | 💰 Investment levels
 
 **Visualiseur interactif du NIST Cybersecurity Framework 2.0**
